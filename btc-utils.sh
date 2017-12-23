@@ -33,3 +33,37 @@ btc-dumpallprivkeys() {
 
 }
 
+
+hashes-calc() {
+   bak="$1"
+   if [ "$bak" == "" ]; then
+       echo Usage: $0 "<backup-file>"  -- calculate mutile hashes.
+       return 1;
+   fi
+
+   if ! [ -f $bak ]; then
+       echo Error: $bak not exist.
+       return 1;
+   fi
+
+   { for a in md5sum sha1sum  sha256sum  sha512sum; do echo $a:`$a $bak`; done } > $bak.hash
+}
+
+hashes-verify() {
+   bak="$1"
+   if [ "$bak" == "" ]; then
+       echo Usage: $0 "<backup-file>"  -- calculate mutile hashes.
+       return 1;
+   fi
+
+   if ! [ -f $bak ]; then
+       echo Error: $bak not exist.
+       return 1;
+   fi
+
+   { sum=$( for a in md5sum sha1sum  sha256sum  sha512sum; do echo $a:`$a $bak`; done ); sum2=`cat $bak.hash`; if [ "$sum" != "$sum2" ]; then echo Error. ; exit 1; else echo OK.; fi; }
+}
+
+
+
+
